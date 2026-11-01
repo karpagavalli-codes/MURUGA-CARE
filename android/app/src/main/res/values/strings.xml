@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Muruga Care</string>
+    <string name="tagline">Your Personal Productivity Companion</string>
+    <string name="motto">Vetrivel Muruganukku Haroharohara</string>
+    <string name="tab_dashboard">Dashboard</string>
+    <string name="tab_tasks">Tasks</string>
+    <string name="tab_planner">Planner</string>
+    <string name="tab_goals">Goals</string>
+    <string name="tab_habits">Habits</string>
+    <string name="tab_hydration">Hydration</string>
+    <string name="tab_insights">Insights</string>
+    <string name="tab_settings">Settings</string>
+</resources>

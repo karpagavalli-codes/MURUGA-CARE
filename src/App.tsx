@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/common/Header';
 import { MobileBottomBar } from './components/common/MobileBottomBar';
 import { ParandhuVaaOverlay } from './components/mascot/ParandhuVaaOverlay';
@@ -18,6 +18,7 @@ import { GoalsView } from './components/views/GoalsView';
 import { SettingsView } from './components/views/SettingsView';
 import { BalaMurugan } from './components/mascot/BalaMurugan';
 import { PeacockCornerMotif, VelIcon } from './components/common/Decorations';
+import { AndroidCodeViewerModal } from './components/common/AndroidCodeViewerModal';
 import {
   UserProfile,
   TaskItem,
@@ -38,6 +39,8 @@ import {
   BookOpen,
   Coffee,
   CheckCircle2,
+  Code2,
+  BellRing,
 } from 'lucide-react';
 import { playTempleBell, playVictoryChime, playWaterDrop } from './utils/audio';
 
@@ -52,40 +55,80 @@ export default function App() {
   // Device simulation preview mode (Desktop full-width vs Mobile 390px frame)
   const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
 
-  // User Profile
-  const [user, setUser] = useState<UserProfile>({
-    name: 'Karthik Narayanan',
-    nickname: 'Kanna',
-    companionTone: 'thozhan',
-    level: 4,
-    levelTitle: 'Level 4: Sadhakan (Focus Seeker)',
-    soundEnabled: true,
-    hapticsEnabled: true,
-    reduceMotion: false,
-    overlayPermission: true,
-    usagePermission: true,
-    batteryOptimized: true,
-    dailyWaterTargetMl: 2500,
-    dailyFocusTargetMinutes: 180, // 3 hours
+  // Android Native Architecture Modal
+  const [showAndroidCodeModal, setShowAndroidCodeModal] = useState(false);
+
+  // Android In-App Push Notification Toast
+  const [androidNotification, setAndroidNotification] = useState<{
+    title: string;
+    message: string;
+    icon?: string;
+  } | null>(null);
+
+  const showAndroidToast = (title: string, message: string, icon = '🔱') => {
+    setAndroidNotification({ title, message, icon });
+    setTimeout(() => {
+      setAndroidNotification((curr) => (curr?.title === title ? null : curr));
+    }, 4500);
+  };
+
+  // User Profile with Local Storage Persistence
+  const [user, setUser] = useState<UserProfile>(() => {
+    const saved = localStorage.getItem('murugacare_user_profile');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      name: 'Karthik Narayanan',
+      nickname: 'Kanna',
+      companionTone: 'thozhan',
+      level: 4,
+      levelTitle: 'Level 4: Sadhakan (Focus Seeker)',
+      soundEnabled: true,
+      hapticsEnabled: true,
+      reduceMotion: false,
+      overlayPermission: true,
+      usagePermission: true,
+      batteryOptimized: true,
+      dailyWaterTargetMl: 2500,
+      dailyFocusTargetMinutes: 180, // 3 hours
+    };
   });
 
+  useEffect(() => {
+    localStorage.setItem('murugacare_user_profile', JSON.stringify(user));
+  }, [user]);
+
   // Daily Metrics
-  const [waterDrankMl, setWaterDrankMl] = useState<number>(1750);
+  const [waterDrankMl, setWaterDrankMl] = useState<number>(() => {
+    const saved = localStorage.getItem('murugacare_water_drank');
+    return saved ? parseInt(saved, 10) : 1750;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('murugacare_water_drank', waterDrankMl.toString());
+  }, [waterDrankMl]);
+
   const [focusMinutesToday, setFocusMinutesToday] = useState<number>(105); // 1h 45m
   const [screenTimeMinutesToday, setScreenTimeMinutesToday] = useState<number>(134); // 2h 14m
 
-  // Tasks
-  const [tasks, setTasks] = useState<TaskItem[]>([
-    {
-      id: 't1',
-      title: 'Systems Architecture & Review',
-      category: 'work',
-      priority: 3,
-      dueDate: '2026-11-01',
-      dueTime: '09:30 AM',
-      completed: true,
-      notes: 'Prepare core design tokens, color contrast AA compliance, and modular UI structure.',
-    },
+  // Tasks with Local Storage Persistence (Room Mirror)
+  const [tasks, setTasks] = useState<TaskItem[]>(() => {
+    const saved = localStorage.getItem('murugacare_tasks');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [
+      {
+        id: 't1',
+        title: 'Systems Architecture & Review',
+        category: 'work',
+        priority: 3,
+        dueDate: '2026-11-01',
+        dueTime: '09:30 AM',
+        completed: true,
+        notes: 'Prepare core design tokens, color contrast AA compliance, and modular UI structure.',
+      },
     {
       id: 't2',
       title: '15-Minute Breathwork & Surya Namaskar',
@@ -136,7 +179,12 @@ export default function App() {
       completed: false,
       notes: 'Verify 10 unique poses render smoothly without any layout jank.',
     },
-  ]);
+  ];
+});
+
+useEffect(() => {
+    localStorage.setItem('murugacare_tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   // Goals and Planner Activities state
   const [goals, setGoals] = useState<GoalItem[]>(() => loadStoredGoals());
@@ -527,7 +575,7 @@ export default function App() {
               <span>Break 🌿</span>
             </button>
 
-            {/* Viewport switch */}
+            {/* Viewport switch & Android Architecture */}
             <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-[#D6A43B]/30 ml-2">
               <button
                 type="button"
@@ -535,7 +583,7 @@ export default function App() {
                 className={`p-1 rounded text-xs transition-colors cursor-pointer ${
                   viewportMode === 'desktop' ? 'bg-[#F28C28] text-white shadow-xs' : 'text-[#49321F]/70'
                 }`}
-                title="Full Desktop Multi-Column Layout (1440px)"
+                title="Full Multi-Column Layout (1440px)"
               >
                 <Monitor size={13} />
               </button>
@@ -545,11 +593,23 @@ export default function App() {
                 className={`p-1 rounded text-xs transition-colors cursor-pointer ${
                   viewportMode === 'mobile' ? 'bg-[#F28C28] text-white shadow-xs' : 'text-[#49321F]/70'
                 }`}
-                title="Mobile Device Viewport (390px)"
+                title="Google Pixel 9 Pro Native Shell (390px)"
               >
                 <Smartphone size={13} />
               </button>
             </div>
+
+            {/* Android Studio Native Kotlin & Compose Inspector */}
+            <button
+              type="button"
+              onClick={() => setShowAndroidCodeModal(true)}
+              className="px-3 py-1 bg-gradient-to-r from-[#0D3B66] to-[#087F78] hover:brightness-110 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer ml-2 active:scale-95 transition-all"
+              title="Inspect Native Android Kotlin Project & Room Architecture"
+            >
+              <Code2 size={13} className="text-[#FFD166]" />
+              <span className="hidden sm:inline">Android Kotlin Code</span>
+              <span className="sm:hidden">Android</span>
+            </button>
           </div>
         </div>
       </div>
@@ -559,16 +619,21 @@ export default function App() {
         <div
           className={
             viewportMode === 'mobile'
-              ? 'max-w-[420px] mx-auto bg-[#FFF5EB] border-4 border-[#49321F]/80 rounded-[40px] p-4 shadow-floating overflow-hidden relative min-h-[780px]'
+              ? 'max-w-[420px] mx-auto bg-[#FFF5EB] border-[6px] border-[#2C1A0D] rounded-[44px] p-4 shadow-2xl overflow-hidden relative min-h-[820px] ring-1 ring-black/10'
               : 'w-full'
           }
         >
-          {/* Mobile frame header bar if in simulated mobile mode */}
+          {/* Android Pixel 9 Pro Status Bar with Camera Punch-Hole */}
           {viewportMode === 'mobile' && (
-            <div className="w-full flex items-center justify-between pb-3 px-2 border-b border-[#D6A43B]/30 mb-4 text-xs font-mono text-[#49321F]/70">
-              <span>9:41</span>
-              <div className="w-20 h-4 rounded-full bg-[#49321F] mx-auto" />
-              <span>100% 🔋</span>
+            <div className="w-full flex items-center justify-between pb-3 px-3 border-b border-[#D6A43B]/20 mb-4 text-[11px] font-mono text-[#49321F]/80 select-none">
+              <span className="font-bold">09:41</span>
+              {/* Camera Punch Hole */}
+              <div className="w-4 h-4 rounded-full bg-[#1A1A1A] mx-auto shadow-inner border border-white/20" />
+              <div className="flex items-center gap-1.5 font-sans text-[10px] font-semibold">
+                <span>5G</span>
+                <span>📶</span>
+                <span>98% 🔋</span>
+              </div>
             </div>
           )}
 
@@ -806,6 +871,37 @@ export default function App() {
           </div>
         </div>
       </main>
+
+      {/* Android Floating Notification Toast Banner */}
+      {androidNotification && (
+        <div className="fixed top-18 right-4 z-50 max-w-sm w-full bg-[#0D3B66] text-white p-3.5 rounded-2xl shadow-2xl border border-[#D6A43B] flex items-start gap-3 animate-slideDown">
+          <div className="w-8 h-8 rounded-xl bg-[#F28C28] flex items-center justify-center text-base shrink-0 shadow-sm">
+            {androidNotification.icon || '🔱'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFD166] font-mono">
+                Muruga Care • Android Notification
+              </span>
+              <button
+                type="button"
+                onClick={() => setAndroidNotification(null)}
+                className="text-white/60 hover:text-white text-xs cursor-pointer ml-2"
+              >
+                ✕
+              </button>
+            </div>
+            <h4 className="text-xs font-bold text-white mt-0.5">{androidNotification.title}</h4>
+            <p className="text-[11px] text-white/85 mt-0.5 leading-tight">{androidNotification.message}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Android Studio Native Kotlin & Room Architecture Viewer Modal */}
+      <AndroidCodeViewerModal
+        isOpen={showAndroidCodeModal}
+        onClose={() => setShowAndroidCodeModal(false)}
+      />
 
       {/* Mobile Sticky Bottom Tab Bar */}
       <MobileBottomBar

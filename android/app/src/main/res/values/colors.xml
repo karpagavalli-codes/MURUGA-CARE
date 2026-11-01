@@ -1,0 +1,17 @@
+<resources>
+    <!-- Devotional Palette: Saffron, Gold, Royal Blue, Peacock Teal, Magenta, Warm Cream -->
+    <color name="saffron">#F28C28</color>
+    <color name="saffron_dark">#D96E14</color>
+    <color name="saffron_light">#FFE6CC</color>
+    <color name="antique_gold">#D6A43B</color>
+    <color name="gold_dark">#B3821C</color>
+    <color name="royal_blue">#0D3B66</color>
+    <color name="royal_blue_dark">#082440</color>
+    <color name="peacock_teal">#087F78</color>
+    <color name="peacock_teal_light">#E0F4F2</color>
+    <color name="magenta_vermilion">#E63946</color>
+    <color name="warm_cream">#FFF9F0</color>
+    <color name="surface_cream">#FFF2DC</color>
+    <color name="text_primary">#2C1A0D</color>
+    <color name="text_secondary">#7A583A</color>
+</resources>
