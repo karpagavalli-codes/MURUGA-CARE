@@ -1,0 +1,6 @@
+{
+  "name": "Muruga Care — Personal Life Companion",
+  "description": "Mindful personal life companion and daily productivity suite with the signature Parandhu Vaa jumping Bala Murugan mascot, Pomodoro focus studio, screen time boundaries, habit & hydration tracking, and Tamil/Tanglish cultural warmth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary-saffron: #F28C28;
+    --accent-royal-blue: #2455A4;
+    --accent-peacock: #087F78;
+    --accent-magenta: #D94B83;
+    --brand-gold: #D6A43B;
+    --deep-maroon: #642D35;
+    --bg-peach: #FFE0C2;
+    --accent-yellow: #FFD166;
+    --surface-cream: #FFF2DC;
+    --accent-coral: #F58B72;
+    --text-dark-brown: #49321F;
+    --accent-mint: #B9DCC5;
+
+    --shadow-ambient: 0px 4px 12px rgba(73, 50, 31, 0.06);
+    --shadow-elevated: 0px 8px 24px rgba(73, 50, 31, 0.12);
+    --shadow-floating: 0px 16px 36px rgba(100, 45, 53, 0.18);
+    --shadow-gold-glow: 0px 0px 18px rgba(214, 164, 59, 0.35);
+  }
+
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background-color: var(--surface-cream);
+    color: var(--text-dark-brown);
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Baloo 2', 'Outfit', cursive, sans-serif;
+  }
+}
+
+/* Kolam micro-dotted pattern */
+.kolam-grid-pattern {
+  background-image: radial-gradient(circle, rgba(214, 164, 59, 0.35) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+}
+
+.kolam-divider {
+  height: 2px;
+  background-image: radial-gradient(circle, #D6A43B 1.5px, transparent 1.5px);
+  background-size: 8px 2px;
+  background-repeat: repeat-x;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 224, 194, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(214, 164, 59, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(242, 140, 40, 0.8);
+}
+
+@keyframes velShimmer {
+  0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateX(200%) rotate(45deg); opacity: 0; }
+}
+
+.vel-shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.vel-shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 70%
+  );
+  animation: velShimmer 3.5s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Mascot floating & gesture animations */
+@keyframes muruganFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes muruganSleepFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(1deg); }
+}
+
+@keyframes muruganCelebrate {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.03); }
+}
+
+.animate-murugan-float {
+  animation: muruganFloat 2.4s infinite ease-in-out;
+}
+
+.animate-murugan-sleep {
+  animation: muruganSleepFloat 3.2s infinite ease-in-out;
+}
+
+.animate-murugan-celebrate {
+  animation: muruganCelebrate 1.4s infinite ease-in-out;
+}
+
+/* Parandhu Vaa signature entrance & exit */
+@keyframes parabolicSpringEntrance {
+  0% {
+    transform: translate(-120px, 160px) scale(0.85);
+    opacity: 0;
+  }
+  65% {
+    transform: translate(6px, -12px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes popScaleIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  75% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-parabolic-entrance {
+  animation: parabolicSpringEntrance 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-pop-scale {
+  animation: popScaleIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
